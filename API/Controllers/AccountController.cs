@@ -4,13 +4,16 @@ using System.Text;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
-
-public class AccountController(DataContext context): BaseApiController
+[Authorize]
+public class AccountController(DataContext context, ITokenService token): BaseApiController
 {
+[AllowAnonymous]
 [HttpPost("register")]
 public async Task<ActionResult<AppUser>> Register(RegisterDto register)
 {
@@ -26,8 +29,9 @@ public async Task<ActionResult<AppUser>> Register(RegisterDto register)
     await context.SaveChangesAsync();
     return user;
 }
+[AllowAnonymous]
 [HttpPost("login")]
-public async Task<ActionResult<AppUser>> Login(LoginDto login)
+public async Task<ActionResult<UserDto>> Login(LoginDto login)
 {
     var user = await context.Users
         .FirstOrDefaultAsync(x => x.UserName == login.Username.ToLower());
@@ -38,7 +42,11 @@ public async Task<ActionResult<AppUser>> Login(LoginDto login)
     {
         if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
     }
-    return user;
+    return new UserDto
+    {
+        Username = user.UserName,
+        Token = token.CreateToken(user)
+    };
 }
 private async Task<bool> UserExists(string username)
 {

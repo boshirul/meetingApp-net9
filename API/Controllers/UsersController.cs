@@ -1,10 +1,12 @@
 using System;
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
+[Authorize]
 public class UsersController(DataContext context) : BaseApiController
 {
     [HttpGet]
@@ -12,6 +14,7 @@ public class UsersController(DataContext context) : BaseApiController
         var users = await context.Users.ToListAsync();
         return users;
     }
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<AppUser>> GetUser(int id){
         var user = await context.Users.FindAsync(id);
