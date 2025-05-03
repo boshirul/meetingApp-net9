@@ -9,12 +9,12 @@ namespace API.Controllers;
 [Authorize]
 public class UsersController(DataContext context) : BaseApiController
 {
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(){
         var users = await context.Users.ToListAsync();
         return users;
     }
-    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<AppUser>> GetUser(int id){
         var user = await context.Users.FindAsync(id);

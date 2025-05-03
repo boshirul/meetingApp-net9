@@ -1,0 +1,25 @@
+<form #registerForm="ngForm" (ngSubmit)="register()" novalidate>
+    <h2 class="text-center text-primary"> Sign Up</h2>
+    <hr>
+    <div class="mb-3 form-floating">
+        <label for="username">Username</label>
+        <input class="form-control" type="text" id="username" name="username" [(ngModel)]="model.username" required>
+    </div>
+    <div class="mb-3 form-floating">
+        <label for="username">Select your favorite user.</label>
+        <select class="form-select" id="userId" name="userId" [(ngModel)]="model.userId" required>
+            @for (user of usersFromHomeComponent(); track $index){
+            <option [value]="user.userName">{{user.userName}}</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3 form-floating">
+        <label for="password">Password</label>
+        <input class="form-control" type="password" id="password" name="password" [(ngModel)]="model.password" required
+            minlength="6">
+    </div>
+    <div class="from-group text-center">
+        <button class="btn btn-primary me-2" type="submit" [disabled]="registerForm.invalid">Register</button>
+        <button class="btn btn-default me-2" type="button" (click)="cancel()">Cancel</button>
+    </div>
+</form>
